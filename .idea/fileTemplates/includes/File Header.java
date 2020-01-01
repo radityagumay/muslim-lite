@@ -12,9 +12,3 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-
-task installGitHooks(type: Copy) {
-    from new File(rootProject.rootDir, 'hooks')
-    into { new File(rootProject.rootDir, '.git/hooks') }
-    fileMode 0777
-}
