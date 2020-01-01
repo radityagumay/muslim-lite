@@ -1,40 +1,57 @@
-version: 2
-jobs:
-  one:
-    docker:
-      - image: circleci/ruby:2.4.1
-    steps:
-      - checkout
-      - run: echo "A first hello"
-      - run: mkdir -p my_workspace
-      - run: echo "Trying out workspaces" > my_workspace/echo-output
-      - persist_to_workspace:
-          # Must be an absolute path, or relative path from working_directory
-          root: my_workspace
-          # Must be relative path from root
-          paths:
-            - echo-output
-  two:
-    docker:
-      - image: circleci/ruby:2.4.1
-    steps:
-      - checkout
-      - run: echo "A more familiar hi"
-      - attach_workspace:
-          # Must be absolute path or relative path from working_directory
-          at: my_workspace
+version: 2.1
 
-      - run: |
-          if [[ $(cat my_workspace/echo-output) == "Trying out workspaces" ]]; then
-            echo "It worked!";
-          else
-            echo "Nope!"; exit 1
-          fi
+executors:
+  muslim-lite-android-executor:
+    docker:
+      - image: circleci/android:api-29
+    working_directory: ~/muslim-lite
+    environment:
+      JAVA_TOOL_OPTIONS: "-Xmx2048m"
+      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
+      TERM: muslim
+
+  muslim-lite-gcloud-executor:
+    docker:
+      - image: google/cloud-sdk:latest
+    working_directory: ~/muslim-lite
+    environment:
+      TERM: muslim
+
+commands:
+  store-muslim-lite-artifacts:
+    description: "It stores Lint & Test artifacts"
+    parameters:
+      artifact-path:
+        type: string
+    steps:
+      - store_artifacts:
+          path: <.artifact-path>>
+
+jobs:
+  build:
+    executor: muslim-lite-android-executor
+    steps:
+      - checkout
+      - run:
+          name: Download Dependencies
+          command: ./gradlew dependencies
+      - run:
+          name: Run AssembleDebug
+          command: ./gradlew assembleDebug --stacktrace
+      - run:
+          name: Gather Lint results
+          command: scripts/copy_lint_results.sh
+      - store-plaid-artifacts:
+          artifact-path: ci_results/lint
+      # Persist build directory for all modules
+      - persist_to_workspace:
+          root: .
+          paths:
+            - build
+            - ./**/build
+
 workflows:
   version: 2
-  one_and_two:
+  build:
     jobs:
-      - one
-      - two:
-          requires:
-            - one
+      - build
