@@ -4,3 +4,8 @@ include ':app'
 include ':common-adapter'
 project(':common-adapter').projectDir = new File("./common/adapter")
 
+include ':core-network'
+project(':core-network').projectDir = new File("./core/network")
+
+include ':feature-quran-list'
+project(':feature-quran-list').projectDir = new File("./features/quran-list")
