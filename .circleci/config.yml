@@ -41,7 +41,7 @@ jobs:
       - run:
           name: Gather Lint results
           command: scripts/copy_lint_results.sh
-      - store-plaid-artifacts:
+      - store-muslim-lite-artifacts:
           artifact-path: ci_results/lint
       # Persist build directory for all modules
       - persist_to_workspace:
