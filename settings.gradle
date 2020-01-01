@@ -1,2 +1,6 @@
 rootProject.name='muslim-lite'
 include ':app'
+
+include ':common-adapter'
+project(':common-adapter').projectDir = new File("./common/adapter")
+
