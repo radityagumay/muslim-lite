@@ -1,6 +1,7 @@
+[![CircleCI](https://circleci.com/gh/radityagumay/muslim-lite/tree/master.svg?style=svg)](https://circleci.com/gh/radityagumay/muslim-lite/tree/master)
+
 # muslim-lite
 muslim application
-
 
 #### License
 ```
